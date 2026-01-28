@@ -1,6 +1,5 @@
 package ru.practicum.moviehub.http;
 
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import ru.practicum.moviehub.store.MoviesStore;
 

@@ -81,7 +81,7 @@ public class MoviesHandler extends BaseHttpHandler implements HttpHandler {
 
     private void handlePost(HttpExchange exchange) throws IOException {
         String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
-        if (contentType == null || !contentType.equalsIgnoreCase("application/json")) {
+        if (contentType == null || !contentType.toLowerCase().startsWith("application/json")) {
             sendText(exchange, "Неподдерживаемый Media Type", 415);
             return;
         }
@@ -109,8 +109,7 @@ public class MoviesHandler extends BaseHttpHandler implements HttpHandler {
                 return;
             }
         } catch (com.google.gson.JsonSyntaxException e) {
-            sendHasErrors(exchange, "Некорректный JSON", List.of("Синтаксическая ошибка в JSON: "
-                    + e.getMessage()));
+            sendText(exchange, "Некорректный JSON", 400);
             return;
         }
 

@@ -43,7 +43,11 @@ public abstract class BaseHttpHandler implements HttpHandler {
     }
 
     protected void sendHasErrors(HttpExchange exchange, String message, List<String> details) throws IOException {
-        ErrorResponse error = new ErrorResponse(message, details);
-        sendJson(exchange, error, 422);
+        ErrorResponse response = new ErrorResponse(message, details);
+        byte[] resp = gson.toJson(response).getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().set("Content-Type", CT_JSON);
+        exchange.sendResponseHeaders(422, resp.length);
+        exchange.getResponseBody().write(resp);
+        exchange.close();
     }
 }

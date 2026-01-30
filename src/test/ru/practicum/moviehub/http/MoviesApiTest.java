@@ -31,24 +31,24 @@ public class MoviesApiTest {
             .build();
 
     @BeforeAll
-    static void beforeAll() throws IOException {
+    public static void beforeAll() throws IOException {
         store = new MoviesStore();
         moviesServer = new MoviesServer(store, 8080);
         moviesServer.start();
     }
 
     @BeforeEach
-    void beforeEach() {
+    public void beforeEach() {
         moviesServer.getStore().clear();
     }
 
     @AfterAll
-    static void afterAll() {
+    public static void afterAll() {
         moviesServer.stop();
     }
 
     @Test
-    void getMovies_whenEmpty_returnsEmptyArray() throws Exception {
+    public void getMovies_whenEmpty_returnsEmptyArray() throws Exception {
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URI))
                 .GET()
@@ -69,7 +69,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldAddMovieWhenDataIsCorrect() throws IOException, InterruptedException {
+    public void shouldAddMovieWhenDataIsCorrect() throws IOException, InterruptedException {
         Movie movie = new Movie("Бойцовский клуб", 1999);
         String json = gson.toJson(movie);
 
@@ -89,7 +89,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn404WhenMovieDoesNotExist() throws IOException, InterruptedException {
+    public void shouldReturn404WhenMovieDoesNotExist() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URI + "/9999"))
                 .GET()
@@ -102,7 +102,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldDeleteExistingMovieApi() throws IOException, InterruptedException {
+    public void shouldDeleteExistingMovieApi() throws IOException, InterruptedException {
         Movie movieToAdd = new Movie("Матрица", 1999);
         String json = gson.toJson(movieToAdd);
 
@@ -137,13 +137,13 @@ public class MoviesApiTest {
     }
 
     @Test
-    void addAndCountMovieStore() {
+    public void addAndCountMovieStore() {
         store.add(new Movie("Пираты Карибского моря", 2006));
         assertEquals(1, store.getAll().size());
     }
 
     @Test
-    void getByIdMovieStore() {
+    public void getByIdMovieStore() {
         Movie addedMovie = store.add(new Movie("Пираты Карибского моря", 2006));
         Movie expectedMovie = new Movie(addedMovie.getId(), "Пираты Карибского моря", 2006);
 
@@ -151,12 +151,12 @@ public class MoviesApiTest {
     }
 
     @Test
-    void getByDoesNotExistIdMovieStore() {
+    public void getByDoesNotExistIdMovieStore() {
         assertNull(store.getById(999));
     }
 
     @Test
-    void getByYearMovieStore() {
+    public void getByYearMovieStore() {
         store.add(new Movie("Пираты Карибского моря", 2006));
         store.add(new Movie("Гарри Поттер", 2006));
         store.add(new Movie("Начало", 2010));
@@ -167,7 +167,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void deleteMovieStore() { // Переименовал
+    public void deleteMovieStore() { // Переименовал
         Movie movie1 = new Movie("Гарри Поттер", 2006);
         Movie addedMovie = store.add(movie1);
         int id = addedMovie.getId();
@@ -180,13 +180,13 @@ public class MoviesApiTest {
     }
 
     @Test
-    void deleteDoesNotExistIdMovieStore() {
+    public void deleteDoesNotExistIdMovieStore() {
         boolean isDeleted = store.delete(999);
         assertFalse(isDeleted);
     }
 
     @Test
-    void shouldBeReturnEmptyListIfNoMoviesForYearStore() {
+    public void shouldBeReturnEmptyListIfNoMoviesForYearStore() {
         store.add(new Movie("Матрица", 1999));
 
         List<Movie> result = store.getByYear(2025);
@@ -196,7 +196,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldBeClearMoviesStore() {
+    public void shouldBeClearMoviesStore() {
         store.add(new Movie("Матрица", 1999));
         store.add(new Movie("Буратино", 2025));
 
@@ -207,7 +207,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn422WhenPostMovieWithEmptyTitle() throws IOException, InterruptedException {
+    public void shouldReturn422WhenPostMovieWithEmptyTitle() throws IOException, InterruptedException {
         Movie movie = new Movie("", 1999);
         String json = gson.toJson(movie);
 
@@ -224,7 +224,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn422WhenPostMovieWithTooLongTitle() throws IOException, InterruptedException {
+    public void shouldReturn422WhenPostMovieWithTooLongTitle() throws IOException, InterruptedException {
         String longTitle = "a".repeat(101);
         Movie movie = new Movie(longTitle, 1999);
         String json = gson.toJson(movie);
@@ -242,7 +242,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn422WhenPostMovieWithInvalidYear() throws IOException, InterruptedException {
+    public void shouldReturn422WhenPostMovieWithInvalidYear() throws IOException, InterruptedException {
         Movie movieTooOld = new Movie("Фильм", 1800);
         Movie movieTooNew = new Movie("Фильм", java.time.Year.now().getValue() + 2);
 
@@ -267,7 +267,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn415WhenPostMovieWithIncorrectContentType() throws IOException, InterruptedException {
+    public void shouldReturn415WhenPostMovieWithIncorrectContentType() throws IOException, InterruptedException {
         Movie movie = new Movie("Фильм", 2000);
         String json = gson.toJson(movie);
 
@@ -283,7 +283,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn400WhenGetMovieWithNonNumericId() throws IOException, InterruptedException {
+    public void shouldReturn400WhenGetMovieWithNonNumericId() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URI + "/abc"))
                 .GET()
@@ -295,7 +295,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn400WhenDeleteMovieWithNonNumericId() throws IOException, InterruptedException {
+    public void shouldReturn400WhenDeleteMovieWithNonNumericId() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URI + "/abc"))
                 .DELETE()
@@ -307,7 +307,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturnMoviesFilteredByYear() throws IOException, InterruptedException {
+    public void shouldReturnMoviesFilteredByYear() throws IOException, InterruptedException {
         addMovieViaApi(new Movie("The Matrix", 1999));
         addMovieViaApi(new Movie("Fight Club", 1999));
         addMovieViaApi(new Movie("Inception", 2010));
@@ -328,7 +328,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturnEmptyListForNonExistentYear() throws IOException, InterruptedException {
+    public void shouldReturnEmptyListForNonExistentYear() throws IOException, InterruptedException {
         addMovieViaApi(new Movie("The Matrix", 1999));
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -342,7 +342,7 @@ public class MoviesApiTest {
     }
 
     @Test
-    void shouldReturn400WhenYearParameterIsNotNumeric() throws IOException, InterruptedException {
+    public void shouldReturn400WhenYearParameterIsNotNumeric() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URI + "?year=abc"))
                 .GET()
@@ -363,5 +363,31 @@ public class MoviesApiTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(201, response.statusCode(), "Вспомогательный метод: Ошибка при добавлении фильма");
         return gson.fromJson(response.body(), Movie.class);
+    }
+
+    @Test
+    public void shouldReturn405WhenMethodNotSupported() throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URI))
+                .method("PUT", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+
+        assertEquals(405, response.statusCode(), "Сервер должен возвращать 405 статус для неподдерживаемого метода PUT");
+        assertTrue(response.body().contains("Метод не поддерживается"), "Тело ответа должно содержать описание ошибки");
+    }
+
+    @Test
+    public void shouldReturn405WhenMethodNotSupportedOnIdPath() throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URI + "/1"))
+                .method("PATCH", HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(405, response.statusCode(), "Сервер должен возвращать 405 статус для метода PATCH на пути /movies/{id}");
     }
 }
